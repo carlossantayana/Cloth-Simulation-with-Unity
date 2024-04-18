@@ -22,9 +22,9 @@ public class MassSpringCloth : MonoBehaviour
     int[] triangles; //Lista que almacena 3 enteros por triángulo de la malla.
     List<Edge> edges = new List<Edge>(); //Lista que almacena todas las aristas de la malla.
 
-    public float clothMass = 5.0f; //Masa total de la tela, repartida equitativamente entre cada uno de los nodos de masa que la componen.
-    public float tractionSpringStiffness = 100.0f; //Constante de rigidez de los muelles de tracción. La tela no es muy elástica.
-    public float flexionSpringStiffness = 50.0f; //Constante de rigidez de los muelles de flexión. Sin embargo, sí se dobla fácilmente.
+    public float clothMass = 0.5f; //Masa total de la tela, repartida equitativamente entre cada uno de los nodos de masa que la componen.
+    public float tractionSpringStiffness = 5.0f; //Constante de rigidez de los muelles de tracción. La tela no es muy elástica.
+    public float flexionSpringStiffness = 1.0f; //Constante de rigidez de los muelles de flexión. Sin embargo, sí se dobla fácilmente.
 
     public float dAbsolute = 0.1f; //Constante de amortiguamiento (damping) absoluto sobre la velocidad de los nodos.
 
@@ -42,7 +42,7 @@ public class MassSpringCloth : MonoBehaviour
 
         for (int i = 0; i < vertices.Length; i++)
         {
-            nodes.Add(new Node(i, vertices[i], clothMass/vertices.Length));
+            nodes.Add(new Node(i, transform.TransformPoint(vertices[i]), clothMass/vertices.Length));
         }
 
         triangles = mesh.triangles;
@@ -64,7 +64,7 @@ public class MassSpringCloth : MonoBehaviour
         {
             if (edges[i].Equals(previousEdge))
             {
-                springs.Add(new Spring(flexionSpringStiffness, nodes[edges[i].vertexOther], nodes[previousEdge.vertexB]));
+                springs.Add(new Spring(flexionSpringStiffness, nodes[edges[i].vertexOther], nodes[previousEdge.vertexOther]));
             }
             else
             {
@@ -78,7 +78,7 @@ public class MassSpringCloth : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.P))
+        if (Input.GetKeyUp(KeyCode.P))
         {
             paused = !paused;
         }
@@ -112,11 +112,11 @@ public class MassSpringCloth : MonoBehaviour
 
         for (int i = 0; i < vertices.Length; i++)
         {
-            vertices[i] = nodes[i].pos;
+            vertices[i] = transform.InverseTransformPoint(nodes[i].pos);
         }
 
         mesh.vertices = vertices;
-        //mesh.RecalculateBounds();
+        mesh.RecalculateBounds();
     }
 
     void IntegrateExplicitEuler()
@@ -139,8 +139,11 @@ public class MassSpringCloth : MonoBehaviour
 
         foreach (Node node in nodes)
         {
-            node.vel += h * node.force / node.mass;
-            node.pos += h * node.vel;
+            if (node.vertexID != 0 && node.vertexID != 110)
+            {
+                node.vel += h * node.force / node.mass;
+                node.pos += h * node.vel;
+            }
         }
     }
 }

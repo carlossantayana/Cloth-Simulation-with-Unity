@@ -11,8 +11,17 @@ public class Edge : IComparable<Edge>
 
     public Edge(int vertexA, int vertexB, int vertexOther)
     {
-        this.vertexA = vertexA;
-        this.vertexB = vertexB;
+        if (vertexA <= vertexB)
+        {
+            this.vertexA = vertexA;
+            this.vertexB = vertexB;
+        }
+        else
+        {
+            this.vertexA = vertexB;
+            this.vertexB = vertexA;
+        }
+
         this.vertexOther = vertexOther;
     }
 

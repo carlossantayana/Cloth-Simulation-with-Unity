@@ -349,12 +349,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   paused: 1
   integrationMethod: 1
-  clothMass: 5
-  tractionSpringStiffness: 100
-  flexionSpringStiffness: 50
+  clothMass: 0.5
+  tractionSpringStiffness: 5
+  flexionSpringStiffness: 1
   dAbsolute: 0.1
   g: {x: 0, y: 9.8, z: 0}
-  h: 1
+  h: 0.01
 --- !u!1 &705507993
 GameObject:
   m_ObjectHideFlags: 0
