@@ -1,14 +1,11 @@
 using Assets.Scripts;
 using System.Collections;
 using System.Collections.Generic;
-//using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
 public class MassSpringCloth : MonoBehaviour
 {
     public bool paused; //Booleano que se encarga de pausar y reanudar la animación.
-
-    List<Fixer> fixers = new List<Fixer>();
 
     public enum Integration
     {

@@ -7,7 +7,7 @@ public class Fixer : MonoBehaviour
     private Collider fixerCollider;
     private MeshRenderer fixerMeshRenderer;
 
-    private void Start()
+    private void Awake()
     {
         fixerCollider = gameObject.GetComponent<Collider>();
         fixerMeshRenderer = gameObject.GetComponent<MeshRenderer>();
