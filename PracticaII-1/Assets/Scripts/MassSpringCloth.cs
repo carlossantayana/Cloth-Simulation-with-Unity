@@ -8,6 +8,8 @@ public class MassSpringCloth : MonoBehaviour
 {
     public bool paused; //Booleano que se encarga de pausar y reanudar la animación.
 
+    List<Fixer> fixers = new List<Fixer>();
+
     public enum Integration
     {
         ExplicitEulerIntegration = 0,
@@ -47,6 +49,22 @@ public class MassSpringCloth : MonoBehaviour
             nodes.Add(new Node(i, transform.TransformPoint(vertices[i]), clothMass/vertices.Length));
         }
 
+        foreach (GameObject go in GameObject.FindGameObjectsWithTag("Fixer"))
+        {
+            Fixer fixer = go.GetComponent<Fixer>();
+
+            if (fixer != null)
+            {
+                foreach (Node node in nodes)
+                {
+                    if (!node.fixedNode)
+                    {
+                        node.fixedNode = fixer.CheckFixerContainsPoint(node.pos);
+                    }
+                }
+            }
+        }
+
         triangles = mesh.triangles;
 
         for (int i = 0; i < triangles.Length; i += 3)
@@ -66,11 +84,11 @@ public class MassSpringCloth : MonoBehaviour
         {
             if (edges[i].Equals(previousEdge))
             {
-                springs.Add(new Spring(flexionSpringStiffness, nodes[edges[i].vertexOther], nodes[previousEdge.vertexOther]));
+                springs.Add(new Spring(flexionSpringStiffness, nodes[edges[i].vertexOther], nodes[previousEdge.vertexOther], "flexion"));
             }
             else
             {
-                springs.Add(new Spring(tractionSpringStiffness, nodes[edges[i].vertexA], nodes[edges[i].vertexB]));
+                springs.Add(new Spring(tractionSpringStiffness, nodes[edges[i].vertexA], nodes[edges[i].vertexB], "traction"));
             }
 
             previousEdge = edges[i];
@@ -125,7 +143,7 @@ public class MassSpringCloth : MonoBehaviour
     {
         foreach (Node node in nodes)
         {
-            if (node.vertexID != 0 && node.vertexID != 110)
+            if (!node.fixedNode)
             {
                 node.pos += h * node.vel;
             }
@@ -143,7 +161,10 @@ public class MassSpringCloth : MonoBehaviour
 
         foreach (Node node in nodes)
         {
-            node.vel += h * node.force / node.mass;
+            if (!node.fixedNode)
+            {
+                node.vel += h * node.force / node.mass;
+            }
         }
     }
 
@@ -164,9 +185,9 @@ public class MassSpringCloth : MonoBehaviour
 
         foreach (Node node in nodes)
         {
-            if (node.vertexID != 0 && node.vertexID != 110)
+            if (!node.fixedNode)
             {
-                node.vel += h * node.force / node.mass;
+                node.vel += h * node.force / node.mass;            
                 node.pos += h * node.vel;
             }
         }
@@ -181,5 +202,29 @@ public class MassSpringCloth : MonoBehaviour
     {
         spring.nodeA.force += -dDeformation * Vector3.Dot(spring.dir, (spring.nodeA.vel - spring.nodeB.vel)) * spring.dir;
         spring.nodeB.force += dDeformation * Vector3.Dot(spring.dir, (spring.nodeA.vel - spring.nodeB.vel)) * spring.dir;
+    }
+
+    private void OnDrawGizmos()
+    {
+        foreach (Spring spring in springs)
+        {
+            if(spring.springType == "flexion")
+            {
+                Gizmos.color = Color.blue;
+            }
+            else
+            {
+                Gizmos.color = Color.red;
+            }
+
+            Gizmos.DrawLine(spring.nodeA.pos, spring.nodeB.pos);
+        }
+
+        Gizmos.color = Color.black;
+
+        foreach (Node node in nodes)
+        {
+            Gizmos.DrawSphere(node.pos, 0.05f);
+        }
     }
 }
