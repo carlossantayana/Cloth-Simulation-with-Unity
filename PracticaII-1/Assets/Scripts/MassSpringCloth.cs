@@ -1,6 +1,7 @@
 using Assets.Scripts;
 using System.Collections;
 using System.Collections.Generic;
+//using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
 public class MassSpringCloth : MonoBehaviour
@@ -27,6 +28,7 @@ public class MassSpringCloth : MonoBehaviour
     public float flexionSpringStiffness = 1.0f; //Constante de rigidez de los muelles de flexión. Sin embargo, sí se dobla fácilmente.
 
     public float dAbsolute = 0.1f; //Constante de amortiguamiento (damping) absoluto sobre la velocidad de los nodos.
+    public float dDeformation = 10f;
 
     public Vector3 g = new Vector3(0.0f, 9.8f, 0.0f); //Constante gravitacional.
 
@@ -121,7 +123,28 @@ public class MassSpringCloth : MonoBehaviour
 
     void IntegrateExplicitEuler()
     {
+        foreach (Node node in nodes)
+        {
+            if (node.vertexID != 0 && node.vertexID != 110)
+            {
+                node.pos += h * node.vel;
+            }
 
+            node.force = -node.mass * g;
+            ApplyDampingNode(node);
+        }
+
+        foreach (Spring spring in springs)
+        {
+            spring.nodeA.force += -spring.k * (spring.lenght - spring.lenght0) * spring.dir;
+            spring.nodeB.force += spring.k * (spring.lenght - spring.lenght0) * spring.dir;
+            ApplyDampingSpring(spring);
+        }
+
+        foreach (Node node in nodes)
+        {
+            node.vel += h * node.force / node.mass;
+        }
     }
 
     void IntegrateSymplecticEuler()
@@ -129,12 +152,14 @@ public class MassSpringCloth : MonoBehaviour
         foreach (Node node in nodes)
         {
             node.force = -node.mass * g;
+            ApplyDampingNode(node);
         }
 
         foreach (Spring spring in springs)
         {
             spring.nodeA.force += -spring.k * (spring.lenght - spring.lenght0) * spring.dir;
             spring.nodeB.force += spring.k * (spring.lenght - spring.lenght0) * spring.dir;
+            ApplyDampingSpring(spring);
         }
 
         foreach (Node node in nodes)
@@ -145,5 +170,16 @@ public class MassSpringCloth : MonoBehaviour
                 node.pos += h * node.vel;
             }
         }
+    }
+
+    void ApplyDampingNode(Node node)
+    {
+        node.force += -dAbsolute * node.vel;
+    }
+
+    void ApplyDampingSpring(Spring spring)
+    {
+        spring.nodeA.force += -dDeformation * Vector3.Dot(spring.dir, (spring.nodeA.vel - spring.nodeB.vel)) * spring.dir;
+        spring.nodeB.force += dDeformation * Vector3.Dot(spring.dir, (spring.nodeA.vel - spring.nodeB.vel)) * spring.dir;
     }
 }

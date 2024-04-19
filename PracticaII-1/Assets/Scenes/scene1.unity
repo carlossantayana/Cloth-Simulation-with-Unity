@@ -352,7 +352,8 @@ MonoBehaviour:
   clothMass: 0.5
   tractionSpringStiffness: 5
   flexionSpringStiffness: 1
-  dAbsolute: 0.1
+  dAbsolute: 0.001
+  dDeformation: 0.05
   g: {x: 0, y: 9.8, z: 0}
   h: 0.01
 --- !u!1 &705507993
