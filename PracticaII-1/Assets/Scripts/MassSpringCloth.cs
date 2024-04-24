@@ -34,6 +34,7 @@ public class MassSpringCloth : MonoBehaviour
     public Vector3 g = new Vector3(0.0f, 9.8f, 0.0f); //Constante gravitacional.
 
     public float h = 0.01f; //Tamaño del paso de integración de las físicas de la animación.
+    public int substeps = 1; //Número de subpasos en cada frame. Se realiza la integración las veces que indique.
 
     // Start is called before the first frame update
     void Start()
@@ -117,31 +118,34 @@ public class MassSpringCloth : MonoBehaviour
             return;
         }
 
-        switch (integrationMethod) //En función del método de integración seleccionado se ejecuta uno u otro.
+        for (int step = 0; step < substeps; step++) //Se realizan uno o varios substeps.
         {
-            case Integration.ExplicitEulerIntegration:
-                IntegrateExplicitEuler();
-                break;
-            case Integration.SymplecticEulerIntegration:
-                IntegrateSymplecticEuler();
-                break;
-            default:
-                Debug.Log("Error: método de integración no encontrado");
-                break;
-        }
+            switch (integrationMethod) //En función del método de integración seleccionado se ejecuta uno u otro.
+            {
+                case Integration.ExplicitEulerIntegration:
+                    IntegrateExplicitEuler();
+                    break;
+                case Integration.SymplecticEulerIntegration:
+                    IntegrateSymplecticEuler();
+                    break;
+                default:
+                    Debug.Log("Error: método de integración no encontrado");
+                    break;
+            }
 
-        foreach(Spring spring in springs) //Se recorre la lista de muelles tras realizar la integración.
-        {
-            spring.UpdateSpring(); //Se recalculan los datos del muelle en el siguiente instante.
-        }
+            foreach (Spring spring in springs) //Se recorre la lista de muelles tras realizar la integración.
+            {
+                spring.UpdateSpring(); //Se recalculan los datos del muelle en el siguiente instante.
+            }
 
-        for (int i = 0; i < vertices.Length; i++)
-        {
-            vertices[i] = transform.InverseTransformPoint(nodes[i].pos); //Se actualiza la copia del array de vértices, pasando de coordenadas globales a locales las nuevas posiciones de los nodos.
-        }
+            for (int i = 0; i < vertices.Length; i++)
+            {
+                vertices[i] = transform.InverseTransformPoint(nodes[i].pos); //Se actualiza la copia del array de vértices, pasando de coordenadas globales a locales las nuevas posiciones de los nodos.
+            }
 
-        mesh.vertices = vertices; //Se asigna al array de vértices del mallado la copia del array de vértices modificado.
-        mesh.RecalculateBounds(); //Se recalculan los bordes de la malla.
+            mesh.vertices = vertices; //Se asigna al array de vértices del mallado la copia del array de vértices modificado.
+            mesh.RecalculateBounds(); //Se recalculan los bordes de la malla.
+        }
     }
 
     void IntegrateExplicitEuler() //Método que realiza la integración de la velocidad y la posición utilizando Euler Explícito.
