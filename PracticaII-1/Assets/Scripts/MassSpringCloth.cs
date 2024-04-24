@@ -34,12 +34,16 @@ public class MassSpringCloth : MonoBehaviour
     public Vector3 g = new Vector3(0.0f, 9.8f, 0.0f); //Constante gravitacional.
 
     public float h = 0.01f; //Tamaño del paso de integración de las físicas de la animación.
-    public int substeps = 1; //Número de subpasos en cada frame. Se realiza la integración las veces que indique.
+    public int substeps = 1; //Número de subpasos. Se realiza la integración las veces que indique por frame.
+    private float h_def; //Paso efectivo finalmente utilizado en la integración. Puede diferir de h en caso de que substeps > 1.
 
     // Start is called before the first frame update
     void Start()
     {
         paused = true; //Al comienzo de la ejecución, la animación se encuentra pausada.
+
+        h_def = h / substeps; //El paso efectivo es igual al paso base divido entre el número de subpasos a realizar por frame.
+
         mesh = gameObject.GetComponent<MeshFilter>().mesh; //Se almacena una referencia al mallado del gameObject.
         vertices = mesh.vertices; //Se almacena una copia de cada uno de los vértices del mallado en un array.
         nodes = new List<Node>(vertices.Length); //Se crea una lista con tantos nodos como vértices.
@@ -113,6 +117,8 @@ public class MassSpringCloth : MonoBehaviour
     //La integración de las físicas se realiza en la actualización de paso fijo, pues así se evita la acumulación de error.
     private void FixedUpdate()
     {
+        h_def = h / substeps; //Actualizamos el paso efectivo en caso de que se modifiquen los parámetros en tiempo de ejecución, aunque la animación este pausada. Se dispone del valor deseado para el paso antes de que se vaya a usar en caso de cualquier cambio de los valores de "h" y "substeps".
+
         if (paused) //Si la animación está pausada no hacemos nada.
         {
             return;
@@ -154,7 +160,7 @@ public class MassSpringCloth : MonoBehaviour
         {
             if (!node.fixedNode) //Que no sea fijo
             {
-                node.pos += h * node.vel; //Se integra primero la posición, con la velocidad del paso actual.
+                node.pos += h_def * node.vel; //Se integra primero la posición, con la velocidad del paso actual.
             }
 
             node.force = -node.mass * g; //Se aplica la fuerza de la gravedad
@@ -172,7 +178,7 @@ public class MassSpringCloth : MonoBehaviour
         {
             if (!node.fixedNode) //Que no sea fijo
             {
-                node.vel += h * node.force / node.mass; //Se integra la velocidad con la fuerza actual calculada.
+                node.vel += h_def * node.force / node.mass; //Se integra la velocidad con la fuerza actual calculada.
             }
         }
     }
@@ -196,8 +202,8 @@ public class MassSpringCloth : MonoBehaviour
         {
             if (!node.fixedNode) //Que no sea fijo
             {
-                node.vel += h * node.force / node.mass; //Se integra la velocidad con la fuerza actual calculada.
-                node.pos += h * node.vel; //Se utiliza la velocidad en el paso siguiente para integrar la nueva posición.
+                node.vel += h_def * node.force / node.mass; //Se integra la velocidad con la fuerza actual calculada.
+                node.pos += h_def * node.vel; //Se utiliza la velocidad en el paso siguiente para integrar la nueva posición.
             }
         }
     }

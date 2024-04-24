@@ -417,7 +417,7 @@ MonoBehaviour:
   dDeformation: 0.05
   g: {x: 0, y: 9.8, z: 0}
   h: 0.01
-  substeps: 5
+  substeps: 1
 --- !u!1 &705507993
 GameObject:
   m_ObjectHideFlags: 0
