@@ -10,7 +10,7 @@ namespace Assets.Scripts
         public Vector3 pos; //Posición del nodo en el espacio 3D.
         public Vector3 vel; //Velocidad del nodo en el espacio 3D.
         public Vector3 force; //Fuerza que está siendo aplicada sobre el nodo.
-        public bool fixedNode = false;
+        public bool fixedNode = false; //Booleano que indica si se trata de un nodo fijo. Por defecto ninguno lo es.
 
         public Node(int id, Vector3 initPos, float nodeMass) //Constructor de objetos de la clase nodo en su estado inicial.
         {
