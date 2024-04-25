@@ -42,7 +42,7 @@ public class MassSpringCloth : MonoBehaviour
     {
         paused = true; //Al comienzo de la ejecución, la animación se encuentra pausada.
 
-        h_def = h / substeps; //El paso efectivo es igual al paso base divido entre el número de subpasos a realizar por frame.
+        h_def = h / substeps; //El paso efectivo es igual al paso base divido entre el número de subpasos a realizar por frame. Se utiliza finalmente un paso inferior, lo que supone controlar mejor el margen de error.
 
         mesh = gameObject.GetComponent<MeshFilter>().mesh; //Se almacena una referencia al mallado del gameObject.
         vertices = mesh.vertices; //Se almacena una copia de cada uno de los vértices del mallado en un array.
