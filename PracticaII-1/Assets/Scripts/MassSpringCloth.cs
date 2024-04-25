@@ -37,10 +37,14 @@ public class MassSpringCloth : MonoBehaviour
     public int substeps = 1; //Número de subpasos. Se realiza la integración las veces que indique por frame.
     private float h_def; //Paso efectivo finalmente utilizado en la integración. Puede diferir de h en caso de que substeps > 1.
 
+    private Wind wind;
+
     // Start is called before the first frame update
     void Start()
     {
         paused = true; //Al comienzo de la ejecución, la animación se encuentra pausada.
+
+        wind = GameObject.Find("Wind").GetComponent<Wind>();
 
         h_def = h / substeps; //El paso efectivo es igual al paso base divido entre el número de subpasos a realizar por frame. Se utiliza finalmente un paso inferior, lo que supone controlar mejor el margen de error.
 
@@ -188,6 +192,7 @@ public class MassSpringCloth : MonoBehaviour
         foreach (Node node in nodes) //Para cada nodo
         {
             node.force = -node.mass * g; //Se aplica la fuerza de la gravedad.
+            node.force += (wind.WindIntensity * wind.maxWindForce * Random.Range(0f, 1f)) * wind.WindDirection;
             ApplyDampingNode(node); //Se aplica la fuerza de amortiguamiento absoluto al nodo
         }
 
