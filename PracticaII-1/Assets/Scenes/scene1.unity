@@ -1085,14 +1085,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   paused: 1
   integrationMethod: 1
-  clothMass: 0.5
-  tractionSpringStiffness: 10
-  flexionSpringStiffness: 1
-  dAbsolute: 0.001
-  dDeformation: 0.01
+  clothMass: 1
+  tractionSpringStiffness: 20
+  flexionSpringStiffness: 6
+  dAbsolute: 0.002
+  dDeformation: 0.02
   g: {x: 0, y: 9.8, z: 0}
   h: 0.01
-  substeps: 1
+  substeps: 25
 --- !u!1 &705507993
 GameObject:
   m_ObjectHideFlags: 0
@@ -1614,7 +1614,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aa97c2774b9b0ea40af62854673c522a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxWindForce: 0.5
+  maxWindForce: 1
 --- !u!4 &1471913821
 Transform:
   m_ObjectHideFlags: 0
