@@ -219,8 +219,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 994.4355, y: 173.9433}
+  m_AnchoredPosition: {x: -0.000013351, y: 0.000014782}
+  m_SizeDelta: {x: 994.4355, y: 145.6966}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &331177694
 MonoBehaviour:
@@ -244,7 +244,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: "Control del viento:\nAl presionar las flechas horizontales cambiar\xE1
     la direcci\xF3n del viento.\nAl presionar las flechas verticales cambiar\xE1
-    la intensidad del viento."
+    la intensidad del viento.\n\nEstos cambios se ver\xE1n reflejados en la flecha
+    situada a la izquierda de la pantalla."
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -271,8 +272,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 27.21
-  m_fontSizeBase: 27.21
+  m_fontSize: 23.04
+  m_fontSizeBase: 23.04
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -1151,8 +1152,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -421.2815, y: 431.4491}
-  m_SizeDelta: {x: -842.5627, y: -862.898}
+  m_AnchoredPosition: {x: -438.43127, y: 441.53717}
+  m_SizeDelta: {x: -876.8622, y: -883.0743}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1764755565
 MonoBehaviour:
