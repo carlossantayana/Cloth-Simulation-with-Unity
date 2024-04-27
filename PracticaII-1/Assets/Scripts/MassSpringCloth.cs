@@ -24,12 +24,12 @@ public class MassSpringCloth : MonoBehaviour
     int[] triangles; //Lista que almacena 3 enteros por triángulo de la malla.
     List<Edge> edges = new List<Edge>(); //Lista que almacena todas las aristas de la malla.
 
-    public float clothMass = 0.5f; //Masa total de la tela, repartida equitativamente entre cada uno de los nodos de masa que la componen.
-    public float tractionSpringStiffness = 5.0f; //Constante de rigidez de los muelles de tracción. La tela no es muy elástica.
-    public float flexionSpringStiffness = 1.0f; //Constante de rigidez de los muelles de flexión. Sin embargo, sí se dobla fácilmente.
+    public float clothMass = 1f; //Masa total de la tela, repartida equitativamente entre cada uno de los nodos de masa que la componen.
+    public float tractionSpringStiffness = 20f; //Constante de rigidez de los muelles de tracción. La tela no es muy elástica.
+    public float flexionSpringStiffness = 6f; //Constante de rigidez de los muelles de flexión. Sin embargo, sí se dobla fácilmente.
 
-    public float dAbsolute = 0.1f; //Constante de amortiguamiento (damping) absoluto sobre la velocidad de los nodos.
-    public float dDeformation = 10f; //Constante de amortiguamiento de la deformación de los muelles.
+    public float dAbsolute = 0.002f; //Constante de amortiguamiento (damping) absoluto sobre la velocidad de los nodos.
+    public float dDeformation = 0.02f; //Constante de amortiguamiento de la deformación de los muelles.
 
     public Vector3 g = new Vector3(0.0f, 9.8f, 0.0f); //Constante gravitacional.
 
@@ -58,19 +58,14 @@ public class MassSpringCloth : MonoBehaviour
             nodes.Add(new Node(i, transform.TransformPoint(vertices[i]), clothMass/vertices.Length));
         }
 
-        //Se buscan los Fixer que hay en la escena.
-        foreach (GameObject go in GameObject.FindGameObjectsWithTag("Fixer")) //Para cada Fixer
+        //Se buscan los Fixer hijos de la tela.
+        foreach (Fixer fixer in gameObject.GetComponentsInChildren<Fixer>()) //Para cada Fixer
         {
-            Fixer fixer = go.GetComponent<Fixer>();
-
-            if (fixer != null)
+            foreach (Node node in nodes) //Para cada nodo
             {
-                foreach (Node node in nodes) //Para cada nodo
+                if (!node.fixedNode) //Si aún no se ha fijado
                 {
-                    if (!node.fixedNode) //Si aún no se ha fijado
-                    {
-                        node.fixedNode = fixer.CheckFixerContainsPoint(node.pos); //Se comprueba si el fixer actual lo contiene, y por tanto, lo fija.
-                    }
+                    node.fixedNode = fixer.CheckFixerContainsPoint(node.pos); //Se comprueba si el fixer actual lo contiene, y por tanto, lo fija.
                 }
             }
         }
@@ -229,25 +224,28 @@ public class MassSpringCloth : MonoBehaviour
 
     private void OnDrawGizmos() //Función de evento de Unity que se ejecuta en cada vuelta del bucle del juego para redibujar los Gizmos.
     {
-        foreach (Spring spring in springs) //Se recorre la lista de muelles, y en función del tipo del muelle se utiliza un color u otro.
+        if (Application.isPlaying)
         {
-            if(spring.springType == "flexion")
+            foreach (Spring spring in springs) //Se recorre la lista de muelles, y en función del tipo del muelle se utiliza un color u otro.
             {
-                Gizmos.color = Color.blue; //Muelles de flexión de color azul.
+                if (spring.springType == "flexion")
+                {
+                    Gizmos.color = Color.blue; //Muelles de flexión de color azul.
+                }
+                else
+                {
+                    Gizmos.color = Color.red; //Muelles de tracción de color rojo.
+                }
+
+                Gizmos.DrawLine(spring.nodeA.pos, spring.nodeB.pos); //Se dibuja una línea entre el par de nodos del muelle.
             }
-            else
+
+            Gizmos.color = Color.black; //Se cambia a color negro.
+
+            foreach (Node node in nodes) //Se recorren los nodos.
             {
-                Gizmos.color = Color.red; //Muelles de tracción de color rojo.
+                Gizmos.DrawSphere(node.pos, 0.05f); //Se pinta una esfera en cada uno de los nodos.
             }
-
-            Gizmos.DrawLine(spring.nodeA.pos, spring.nodeB.pos); //Se dibuja una línea entre el par de nodos del muelle.
-        }
-
-        Gizmos.color = Color.black; //Se cambia a color negro.
-
-        foreach (Node node in nodes) //Se recorren los nodos.
-        {
-            Gizmos.DrawSphere(node.pos, 0.05f); //Se pinta una esfera en cada uno de los nodos.
         }
     } //Estos Gizmos nos permiten ver en tiempo real el movimiento de los vértices y los distintos tipos de muelles.
 }
