@@ -632,7 +632,7 @@ MonoBehaviour:
   dDeformation: 0.02
   g: {x: 0, y: 9.8, z: 0}
   h: 0.01
-  substeps: 25
+  substeps: 1
 --- !u!64 &378055966
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -1082,7 +1082,7 @@ MonoBehaviour:
   dDeformation: 0.02
   g: {x: 0, y: 9.8, z: 0}
   h: 0.01
-  substeps: 25
+  substeps: 1
 --- !u!1 &704963791
 GameObject:
   m_ObjectHideFlags: 0
@@ -2275,7 +2275,7 @@ MonoBehaviour:
   dDeformation: 0.02
   g: {x: 0, y: 9.8, z: 0}
   h: 0.01
-  substeps: 25
+  substeps: 1
 --- !u!64 &1380753785
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -2687,7 +2687,7 @@ MonoBehaviour:
   dDeformation: 0.02
   g: {x: 0, y: 9.8, z: 0}
   h: 0.01
-  substeps: 25
+  substeps: 1
 --- !u!64 &1525487980
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -3465,7 +3465,7 @@ MonoBehaviour:
   dDeformation: 0.02
   g: {x: 0, y: 9.8, z: 0}
   h: 0.01
-  substeps: 25
+  substeps: 1
 --- !u!64 &2141123805
 MeshCollider:
   m_ObjectHideFlags: 0
