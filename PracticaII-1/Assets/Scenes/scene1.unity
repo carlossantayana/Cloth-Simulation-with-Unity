@@ -626,8 +626,8 @@ MonoBehaviour:
   paused: 1
   integrationMethod: 1
   clothMass: 1
-  tractionSpringStiffness: 20
-  flexionSpringStiffness: 6
+  tractionSpringStiffness: 6
+  flexionSpringStiffness: 1
   dAbsolute: 0.002
   dDeformation: 0.02
   g: {x: 0, y: 9.8, z: 0}
@@ -2268,7 +2268,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   paused: 1
   integrationMethod: 1
-  clothMass: 1
+  clothMass: 4
   tractionSpringStiffness: 20
   flexionSpringStiffness: 6
   dAbsolute: 0.002
@@ -2681,8 +2681,8 @@ MonoBehaviour:
   paused: 1
   integrationMethod: 1
   clothMass: 1
-  tractionSpringStiffness: 20
-  flexionSpringStiffness: 6
+  tractionSpringStiffness: 30
+  flexionSpringStiffness: 8
   dAbsolute: 0.002
   dDeformation: 0.02
   g: {x: 0, y: 9.8, z: 0}
@@ -3458,7 +3458,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   paused: 1
   integrationMethod: 1
-  clothMass: 1
+  clothMass: 4
   tractionSpringStiffness: 20
   flexionSpringStiffness: 6
   dAbsolute: 0.002

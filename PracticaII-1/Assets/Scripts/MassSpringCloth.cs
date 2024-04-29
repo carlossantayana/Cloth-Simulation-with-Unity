@@ -137,6 +137,7 @@ public class MassSpringCloth : MonoBehaviour
 
         //En caso de que alguna de las copias de los valores originales difiera de este (pues puede ser modificado desde el inspector), se actualizará la masa de los nodos,
         //la rigidez de los muelles, o el tamaño del paso efectivo de integración. A su vez, se actualizará la copia, una vez realizados los cambios.
+        //Esto nos permite actualizar la masa de los nodos, la rigidez de los muelles y el paso de integración efectivo en tiempo de ejecución.
 
         if (clothMassChangeCheck != clothMass)
         {
