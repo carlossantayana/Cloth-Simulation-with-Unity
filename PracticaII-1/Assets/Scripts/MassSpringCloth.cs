@@ -25,13 +25,13 @@ public class MassSpringCloth : MonoBehaviour
     List<Edge> edges = new List<Edge>(); //Lista que almacena todas las aristas de la malla.
 
     public float clothMass = 1f; //Masa total de la tela, repartida equitativamente entre cada uno de los nodos de masa que la componen.
-    private float clothMassChangeCheck;
+    private float clothMassChangeCheck; //Variable para comprobar si cambió el valor de la masa.
 
     public float tractionSpringStiffness = 20f; //Constante de rigidez de los muelles de tracción. La tela no es muy elástica.
-    private float tractionSpringStiffnessChangeCheck;
+    private float tractionSpringStiffnessChangeCheck; //Variable para comprobar si cambió el valor de la rigidez de tracción.
 
     public float flexionSpringStiffness = 6f; //Constante de rigidez de los muelles de flexión. Sin embargo, sí se dobla fácilmente.
-    private float flexionSpringStiffnessChangeCheck;
+    private float flexionSpringStiffnessChangeCheck; //Variable para comprobar si cambió el valor de la rigidez de flexión.
 
     public float dAbsolute = 0.002f; //Constante de amortiguamiento (damping) absoluto sobre la velocidad de los nodos.
     public float dDeformation = 0.02f; //Constante de amortiguamiento de la deformación de los muelles.
@@ -39,10 +39,10 @@ public class MassSpringCloth : MonoBehaviour
     public Vector3 g = new Vector3(0.0f, 9.8f, 0.0f); //Constante gravitacional.
 
     public float h = 0.01f; //Tamaño del paso de integración de las físicas de la animación.
-    private float hChangeCheck;
+    private float hChangeCheck; //Variable para comprobar si cambió el valor de el paso de integración.
 
-    public int substeps = 1; //Número de subpasos. Se realiza la integración las veces que indique por frame.
-    private int substepsChangeCheck;
+    public int substeps = 1; //Número de subpasos. Se divide la integración las veces que indique por frame.
+    private int substepsChangeCheck; //Variable para comprobar si cambió el valor de el número de substeps.
 
     private float h_def; //Paso efectivo finalmente utilizado en la integración. Puede diferir de h en caso de que substeps > 1.
 
@@ -53,6 +53,7 @@ public class MassSpringCloth : MonoBehaviour
     {
         paused = true; //Al comienzo de la ejecución, la animación se encuentra pausada.
 
+        //Se inicializa el valor de los comprobadores al valor inicial de las variables originales.
         clothMassChangeCheck = clothMass;
         flexionSpringStiffnessChangeCheck = flexionSpringStiffness;
         tractionSpringStiffnessChangeCheck = tractionSpringStiffness;
@@ -128,6 +129,8 @@ public class MassSpringCloth : MonoBehaviour
         {
             paused = !paused;
         }
+
+        //En caso de que alguna de las copias de los valores originales difiera de este (pues puede ser modificado desde el inspector), se actualizará la masa de los nodos, la rigidez de los muelles, o el tamaño del paso efectivo de integración. A su vez, se actualizará la copia, una vez realizados los cambios.
 
         if (clothMassChangeCheck != clothMass)
         {
@@ -295,6 +298,7 @@ public class MassSpringCloth : MonoBehaviour
         }
     } //Estos Gizmos nos permiten ver en tiempo real el movimiento de los vértices y los distintos tipos de muelles.
 
+    //Método que se llama en caso de que la masa de la tela se haya modificado desde el inspector, actualizando las masas de cada uno de los nodos.
     private void UpdateNodeMass()
     {
         foreach (Node node in nodes)
@@ -303,6 +307,7 @@ public class MassSpringCloth : MonoBehaviour
         }
     }
 
+    //Método que se llama en caso de que se haya modificado la rigidez de los muelles desde el inspector, actualizando las constantes de rigidez de cada uno de los muelles, respetando sus tipos.
     private void UpdateSpringStiffness()
     {
         foreach (Spring spring in springs)
@@ -318,6 +323,7 @@ public class MassSpringCloth : MonoBehaviour
         }
     }
 
+    //Método que se llama en caso de que se haya modificado el tamaño del paso de integración o el número de subpasos a realizar por frame, actualizando el paso efectivo.
     private void UpdateIntegrationStep()
     {
         h_def = h / substeps;
