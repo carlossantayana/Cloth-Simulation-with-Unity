@@ -55,13 +55,14 @@ public class MassSpringCloth : MonoBehaviour
         for (int i = 0; i < vertices.Length; i++)
         {
             //Se insertan en la lista cada uno de los vértices, almacenándose su identificador, su posición en coordenadas globales, y la parte proporcional que le corresponde de la masa total de la tela.
-            nodes.Add(new Node(i, transform.TransformPoint(vertices[i]), clothMass/vertices.Length));
+            nodes.Add(new Node(i, transform.TransformPoint(vertices[i]), clothMass / vertices.Length));
         }
 
-        //Se buscan los Fixer hijos de la tela.
-        foreach (Fixer fixer in gameObject.GetComponentsInChildren<Fixer>()) //Para cada Fixer
+
+        foreach (Node node in nodes) //Para cada nodo
         {
-            foreach (Node node in nodes) //Para cada nodo
+            //Se buscan los Fixer hijos de la tela.
+            foreach (Fixer fixer in gameObject.GetComponentsInChildren<Fixer>()) //Para cada Fixer
             {
                 if (!node.fixedNode) //Si aún no se ha fijado
                 {
@@ -70,12 +71,13 @@ public class MassSpringCloth : MonoBehaviour
             }
         }
 
+
         triangles = mesh.triangles; //Array que almacena en 3 posiciones consecutivas los índices de los vértices de cada triángulo.
 
         for (int i = 0; i < triangles.Length; i += 3) //Recorremos los triángulos.
         {
             //Se crean las 3 aristas del triángulo
-            Edge A = new Edge(triangles[i], triangles[i+1], triangles[i+2]);
+            Edge A = new Edge(triangles[i], triangles[i + 1], triangles[i + 2]);
             Edge B = new Edge(triangles[i], triangles[i + 2], triangles[i + 1]);
             Edge C = new Edge(triangles[i + 1], triangles[i + 2], triangles[i]);
 
@@ -123,6 +125,7 @@ public class MassSpringCloth : MonoBehaviour
             return;
         }
 
+        //Si la animación no está pausada.
         for (int step = 0; step < substeps; step++) //Se realizan uno o varios substeps.
         {
             switch (integrationMethod) //En función del método de integración seleccionado se ejecuta uno u otro.
@@ -211,7 +214,7 @@ public class MassSpringCloth : MonoBehaviour
 
     void ApplyDampingNode(Node node) //Método que aplica el amortiguamiento absoluto del nodo.
     {
-        node.force += -dAbsolute * node.vel; //Se logra aplicando una fuerza proporcional a la velocidad ajustada por el coeficiente de amortiguamiento absoluto, en sentido contrario de la velocidad. Simula el rozamiento con el aire.
+        node.force += -dAbsolute * node.vel; //Se logra aplicando una fuerza proporcional a la velocidad del nodo ajustada por el coeficiente de amortiguamiento absoluto, en sentido contrario de la velocidad. Simula el rozamiento con el aire.
     }
 
     void ApplyDampingSpring(Spring spring) //Método que aplica el amortiguamiento de la deformación del muelle.
@@ -224,7 +227,7 @@ public class MassSpringCloth : MonoBehaviour
 
     private void OnDrawGizmos() //Función de evento de Unity que se ejecuta en cada vuelta del bucle del juego para redibujar los Gizmos.
     {
-        if (Application.isPlaying)
+        if (Application.isPlaying) //Se dibujarán únicamente durante la ejecución de la aplicación, pues es al inicio de esta que se crean los muelles y nodos de la tela.
         {
             foreach (Spring spring in springs) //Se recorre la lista de muelles, y en función del tipo del muelle se utiliza un color u otro.
             {
