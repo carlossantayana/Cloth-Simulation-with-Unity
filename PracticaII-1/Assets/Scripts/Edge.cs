@@ -27,7 +27,8 @@ public class Edge : IComparable<Edge>
         this.vertexOther = vertexOther;
     }
 
-    //Implementamos el método CompareTo de la interfaz IComparable para poder ordenar los objetos Edge dentro de una lista. Necesario para eliminar las aristas repetidas del mallado.
+    //Implementamos el método CompareTo de la interfaz IComparable para poder ordenar los objetos Edge dentro de una lista.
+    //Necesario para eliminar las aristas repetidas del mallado.
     public int CompareTo(Edge other)
     {
         if (this.vertexA < other.vertexA)

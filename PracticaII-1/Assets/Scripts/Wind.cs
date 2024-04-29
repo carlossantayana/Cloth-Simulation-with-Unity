@@ -42,7 +42,8 @@ public class Wind : MonoBehaviour //Componente que se encarga de gestionar el ca
     // Update is called once per frame
     void Update()
     {
-        //Al pulsar las teclas de las flechas izquierda o derecha, el gameObject "Wind" rotará, y se actualizará la dirección del viento en función de su vector forward, ahora rotado.
+        //Al pulsar las teclas de las flechas izquierda o derecha, el gameObject "Wind" rotará, y se actualizará la dirección del viento en función de su vector forward,
+        //ahora rotado.
         if (Input.GetKey(KeyCode.LeftArrow))
         {
             transform.Rotate(new Vector3(0f, -_rotationSpeed*Time.deltaTime, 0f));
@@ -55,7 +56,8 @@ public class Wind : MonoBehaviour //Componente que se encarga de gestionar el ca
             _windDirection = transform.forward;
         }
 
-        //Al pulsar las teclas de flecha hacia arriba y hacia abajo, incrementará y decrementará la intensidad del viento respectivamente, manteniéndola entre los valores de 0 y 1. Se escalan y trasladan los "gizmos" para reflejar estos cambios.
+        //Al pulsar las teclas de flecha hacia arriba y hacia abajo, incrementará y decrementará la intensidad del viento respectivamente,
+        //manteniéndola entre los valores de 0 y 1. Se escalan y trasladan los "gizmos" para reflejar estos cambios.
         if (Input.GetKey(KeyCode.UpArrow))
         {
             if (_windIntensity < 1) //Si la intensidad del viento es inferior a 1.

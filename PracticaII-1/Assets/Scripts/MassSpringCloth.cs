@@ -20,7 +20,8 @@ public class MassSpringCloth : MonoBehaviour
     Mesh mesh; //Mallado triangular de la tela.
     Vector3[] vertices; //Array que almacena en cada posición una copia de la posición 3D de cada vértice del mallado.
     List<Node> nodes; //Lista de objetos de la clase nodo que almacenan las propiedas físicas de los vértices del mallado para el cálculo de la animación.
-    List<Spring> springs = new List<Spring>(); //Lista de objetos de la clase muelle que almacena las propiedades físicas de cada muelle y los 2 vértices que lo componen para el cálculo de la animación.
+    List<Spring> springs = new List<Spring>(); //Lista de objetos de la clase muelle que almacena las propiedades físicas de cada muelle y los 2 vértices que lo componen
+                                               //para el cálculo de la animación.
     int[] triangles; //Lista que almacena 3 enteros por triángulo de la malla.
     List<Edge> edges = new List<Edge>(); //Lista que almacena todas las aristas de la malla.
 
@@ -62,7 +63,8 @@ public class MassSpringCloth : MonoBehaviour
 
         wind = GameObject.Find("Wind").GetComponent<Wind>(); //Se almacena el componente del viento del gameObject "Wind".
 
-        h_def = h / substeps; //El paso efectivo es igual al paso base divido entre el número de subpasos a realizar por frame. Se utiliza finalmente un paso inferior, lo que supone controlar mejor el margen de error.
+        h_def = h / substeps; //El paso efectivo es igual al paso base divido entre el número de subpasos a realizar por frame. Se utiliza finalmente un paso inferior,
+                              //lo que supone controlar mejor el margen de error.
 
         mesh = gameObject.GetComponent<MeshFilter>().mesh; //Se almacena una referencia al mallado del gameObject.
         vertices = mesh.vertices; //Se almacena una copia de cada uno de los vértices del mallado en un array.
@@ -70,7 +72,8 @@ public class MassSpringCloth : MonoBehaviour
 
         for (int i = 0; i < vertices.Length; i++)
         {
-            //Se insertan en la lista cada uno de los vértices, almacenándose su identificador, su posición en coordenadas globales, y la parte proporcional que le corresponde de la masa total de la tela.
+            //Se insertan en la lista cada uno de los vértices, almacenándose su identificador, su posición en coordenadas globales,
+            //y la parte proporcional que le corresponde de la masa total de la tela.
             nodes.Add(new Node(i, transform.TransformPoint(vertices[i]), clothMass / vertices.Length));
         }
 
@@ -111,11 +114,13 @@ public class MassSpringCloth : MonoBehaviour
         {
             if (edges[i].Equals(previousEdge)) //Si la arista actual es igual a la anterior (es una arista repetida)
             {
-                springs.Add(new Spring(flexionSpringStiffness, nodes[edges[i].vertexOther], nodes[previousEdge.vertexOther], "flexion")); //Aprovechamos el vértice opuesto a la arista para crear el muelle de flexión. Se almacena el tipo de muelle en forma de string.
+                //Aprovechamos el vértice opuesto a la arista para crear el muelle de flexión. Se almacena el tipo de muelle en forma de string.
+                springs.Add(new Spring(flexionSpringStiffness, nodes[edges[i].vertexOther], nodes[previousEdge.vertexOther], "flexion"));
             }
             else //Si no
             {
-                springs.Add(new Spring(tractionSpringStiffness, nodes[edges[i].vertexA], nodes[edges[i].vertexB], "traction")); //Agregamos un muelle de tracción en la arista. Se almacena el tipo de muelle en forma de string.
+                //Agregamos un muelle de tracción en la arista. Se almacena el tipo de muelle en forma de string.
+                springs.Add(new Spring(tractionSpringStiffness, nodes[edges[i].vertexA], nodes[edges[i].vertexB], "traction"));
             }
 
             previousEdge = edges[i]; //Actualizamos la referencia a la arista anterior.
@@ -130,7 +135,8 @@ public class MassSpringCloth : MonoBehaviour
             paused = !paused;
         }
 
-        //En caso de que alguna de las copias de los valores originales difiera de este (pues puede ser modificado desde el inspector), se actualizará la masa de los nodos, la rigidez de los muelles, o el tamaño del paso efectivo de integración. A su vez, se actualizará la copia, una vez realizados los cambios.
+        //En caso de que alguna de las copias de los valores originales difiera de este (pues puede ser modificado desde el inspector), se actualizará la masa de los nodos,
+        //la rigidez de los muelles, o el tamaño del paso efectivo de integración. A su vez, se actualizará la copia, una vez realizados los cambios.
 
         if (clothMassChangeCheck != clothMass)
         {
@@ -194,7 +200,8 @@ public class MassSpringCloth : MonoBehaviour
 
             for (int i = 0; i < vertices.Length; i++)
             {
-                vertices[i] = transform.InverseTransformPoint(nodes[i].pos); //Se actualiza la copia del array de vértices, pasando de coordenadas globales a locales las nuevas posiciones de los nodos.
+                //Se actualiza la copia del array de vértices, pasando de coordenadas globales a locales las nuevas posiciones de los nodos.
+                vertices[i] = transform.InverseTransformPoint(nodes[i].pos);
             }
 
             mesh.vertices = vertices; //Se asigna al array de vértices del mallado la copia del array de vértices modificado.
@@ -212,11 +219,16 @@ public class MassSpringCloth : MonoBehaviour
             }
 
             node.force = -node.mass * g; //Se aplica la fuerza de la gravedad
-            node.force += (wind.WindIntensity * wind.maxWindForce * Random.Range(0f, 1f)) * wind.WindDirection; //Se agrega la fuerza del viento en función de su intensidad, de la máxima fuerza que puede alcanzar, y su dirección. También se agrega un cierto grado de aleatoriedad para cada nodo en cada frame, pues el viento nunca permanece completamente constante.
+
+            //Se agrega la fuerza del viento en función de su intensidad, de la máxima fuerza que puede alcanzar, y su dirección. También se agrega
+            //un cierto grado de aleatoriedad para cada nodo en cada frame, pues el viento nunca permanece completamente constante.
+            node.force += (wind.WindIntensity * wind.maxWindForce * Random.Range(0f, 1f)) * wind.WindDirection;
+
             ApplyDampingNode(node); //Se aplica la fuerza de amortiguamiento absoluto al nodo
         }
 
-        foreach (Spring spring in springs) //Para cada muelle, se aplica la fuerza elástica a los dos nodos que lo componen, en sentidos opuestos por el principio de acción y reacción.
+        //Para cada muelle, se aplica la fuerza elástica a los dos nodos que lo componen, en sentidos opuestos por el principio de acción y reacción.
+        foreach (Spring spring in springs)
         {
             spring.nodeA.force += -spring.k * (spring.lenght - spring.lenght0) * spring.dir;
             spring.nodeB.force += spring.k * (spring.lenght - spring.lenght0) * spring.dir;
@@ -237,11 +249,16 @@ public class MassSpringCloth : MonoBehaviour
         foreach (Node node in nodes) //Para cada nodo
         {
             node.force = -node.mass * g; //Se aplica la fuerza de la gravedad.
-            node.force += (wind.WindIntensity * wind.maxWindForce * Random.Range(0f, 1f)) * wind.WindDirection; //Se agrega la fuerza del viento en función de su intensidad, de la máxima fuerza que puede alcanzar, y su dirección. También se agrega un cierto grado de aleatoriedad para cada nodo en cada frame, pues el viento nunca permanece completamente constante.
+
+            //Se agrega la fuerza del viento en función de su intensidad, de la máxima fuerza que puede alcanzar, y su dirección. También se agrega
+            //un cierto grado de aleatoriedad para cada nodo en cada frame, pues el viento nunca permanece completamente constante.
+            node.force += (wind.WindIntensity * wind.maxWindForce * Random.Range(0f, 1f)) * wind.WindDirection;
+
             ApplyDampingNode(node); //Se aplica la fuerza de amortiguamiento absoluto al nodo
         }
 
-        foreach (Spring spring in springs) //Para cada muelle, se aplica la fuerza elástica a los dos nodos que lo componen, en sentidos opuestos por el principio de acción y reacción.
+        //Para cada muelle, se aplica la fuerza elástica a los dos nodos que lo componen, en sentidos opuestos por el principio de acción y reacción.
+        foreach (Spring spring in springs)
         {
             spring.nodeA.force += -spring.k * (spring.lenght - spring.lenght0) * spring.dir;
             spring.nodeB.force += spring.k * (spring.lenght - spring.lenght0) * spring.dir;
@@ -260,13 +277,16 @@ public class MassSpringCloth : MonoBehaviour
 
     void ApplyDampingNode(Node node) //Método que aplica el amortiguamiento absoluto del nodo.
     {
-        node.force += -dAbsolute * node.vel; //Se logra aplicando una fuerza proporcional a la velocidad del nodo ajustada por el coeficiente de amortiguamiento absoluto, en sentido contrario de la velocidad. Simula el rozamiento con el aire.
+        //Se logra aplicando una fuerza proporcional a la velocidad del nodo ajustada por el coeficiente de amortiguamiento absoluto, en sentido contrario de la velocidad.
+        //Simula el rozamiento con el aire.
+        node.force += -dAbsolute * node.vel;
     }
 
     void ApplyDampingSpring(Spring spring) //Método que aplica el amortiguamiento de la deformación del muelle.
     {
         //A cada nodo del muelle se le aplica la misma fuerza en sentido contrario por el principio de acción y reacción.
-        //La fuerza de amortiguamiento de la deformación depende de las velocidades relativas de los nodos del muelle y la dirección del muelle, ajustada por un coeficiente de amortiguamiento de la deformación.
+        //La fuerza de amortiguamiento de la deformación depende de las velocidades relativas de los nodos del muelle y la dirección del muelle,
+        //ajustada por un coeficiente de amortiguamiento de la deformación.
         spring.nodeA.force += -dDeformation * Vector3.Dot(spring.dir, (spring.nodeA.vel - spring.nodeB.vel)) * spring.dir;
         spring.nodeB.force += dDeformation * Vector3.Dot(spring.dir, (spring.nodeA.vel - spring.nodeB.vel)) * spring.dir;
     }
@@ -307,7 +327,8 @@ public class MassSpringCloth : MonoBehaviour
         }
     }
 
-    //Método que se llama en caso de que se haya modificado la rigidez de los muelles desde el inspector, actualizando las constantes de rigidez de cada uno de los muelles, respetando sus tipos.
+    //Método que se llama en caso de que se haya modificado la rigidez de los muelles desde el inspector, actualizando las constantes de rigidez de cada uno de los muelles,
+    //respetando sus tipos.
     private void UpdateSpringStiffness()
     {
         foreach (Spring spring in springs)
