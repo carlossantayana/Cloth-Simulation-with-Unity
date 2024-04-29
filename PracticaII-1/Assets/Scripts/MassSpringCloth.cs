@@ -25,8 +25,13 @@ public class MassSpringCloth : MonoBehaviour
     List<Edge> edges = new List<Edge>(); //Lista que almacena todas las aristas de la malla.
 
     public float clothMass = 1f; //Masa total de la tela, repartida equitativamente entre cada uno de los nodos de masa que la componen.
+    private float clothMassChangeCheck;
+
     public float tractionSpringStiffness = 20f; //Constante de rigidez de los muelles de tracción. La tela no es muy elástica.
+    private float tractionSpringStiffnessChangeCheck;
+
     public float flexionSpringStiffness = 6f; //Constante de rigidez de los muelles de flexión. Sin embargo, sí se dobla fácilmente.
+    private float flexionSpringStiffnessChangeCheck;
 
     public float dAbsolute = 0.002f; //Constante de amortiguamiento (damping) absoluto sobre la velocidad de los nodos.
     public float dDeformation = 0.02f; //Constante de amortiguamiento de la deformación de los muelles.
@@ -34,7 +39,11 @@ public class MassSpringCloth : MonoBehaviour
     public Vector3 g = new Vector3(0.0f, 9.8f, 0.0f); //Constante gravitacional.
 
     public float h = 0.01f; //Tamaño del paso de integración de las físicas de la animación.
+    private float hChangeCheck;
+
     public int substeps = 1; //Número de subpasos. Se realiza la integración las veces que indique por frame.
+    private int substepsChangeCheck;
+
     private float h_def; //Paso efectivo finalmente utilizado en la integración. Puede diferir de h en caso de que substeps > 1.
 
     private Wind wind; //Componente del viento y sus propiedades para aplicar la fuerza de este sobre la tela.
@@ -43,6 +52,12 @@ public class MassSpringCloth : MonoBehaviour
     void Start()
     {
         paused = true; //Al comienzo de la ejecución, la animación se encuentra pausada.
+
+        clothMassChangeCheck = clothMass;
+        flexionSpringStiffnessChangeCheck = flexionSpringStiffness;
+        tractionSpringStiffnessChangeCheck = tractionSpringStiffness;
+        hChangeCheck = h;
+        substepsChangeCheck = substeps;
 
         wind = GameObject.Find("Wind").GetComponent<Wind>(); //Se almacena el componente del viento del gameObject "Wind".
 
@@ -113,13 +128,41 @@ public class MassSpringCloth : MonoBehaviour
         {
             paused = !paused;
         }
+
+        if (clothMassChangeCheck != clothMass)
+        {
+            UpdateNodeMass();
+            clothMassChangeCheck = clothMass;
+        }
+
+        if (flexionSpringStiffnessChangeCheck != flexionSpringStiffness)
+        {
+            UpdateSpringStiffness();
+            flexionSpringStiffnessChangeCheck = flexionSpringStiffness;
+        }
+
+        if (tractionSpringStiffnessChangeCheck != tractionSpringStiffness)
+        {
+            UpdateSpringStiffness();
+            tractionSpringStiffnessChangeCheck = tractionSpringStiffness;
+        }
+
+        if (hChangeCheck != h)
+        {
+            UpdateIntegrationStep();
+            hChangeCheck = h;
+        }
+
+        if (substepsChangeCheck != substeps)
+        {
+            UpdateIntegrationStep();
+            substepsChangeCheck = substeps;
+        }
     }
 
     //La integración de las físicas se realiza en la actualización de paso fijo, pues así se evita la acumulación de error.
     private void FixedUpdate()
     {
-        h_def = h / substeps; //Actualizamos el paso efectivo en caso de que se modifiquen los parámetros en tiempo de ejecución, aunque la animación este pausada. Se dispone del valor deseado para el paso antes de que se vaya a usar en caso de cualquier cambio de los valores de "h" y "substeps".
-
         if (paused) //Si la animación está pausada no hacemos nada.
         {
             return;
@@ -251,4 +294,32 @@ public class MassSpringCloth : MonoBehaviour
             }
         }
     } //Estos Gizmos nos permiten ver en tiempo real el movimiento de los vértices y los distintos tipos de muelles.
+
+    private void UpdateNodeMass()
+    {
+        foreach (Node node in nodes)
+        {
+            node.mass = clothMass / vertices.Length;
+        }
+    }
+
+    private void UpdateSpringStiffness()
+    {
+        foreach (Spring spring in springs)
+        {
+            if (spring.springType == "flexion")
+            {
+                spring.k = flexionSpringStiffness;
+            }
+            else
+            {
+                spring.k = tractionSpringStiffness;
+            }
+        }
+    }
+
+    private void UpdateIntegrationStep()
+    {
+        h_def = h / substeps;
+    }
 }
